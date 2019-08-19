@@ -9,19 +9,19 @@ import display
 import gui_util
 import stft_zoom
 
-# from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename
 
-def openfile(axis, figure):
+def openfile(axis, figure, sr=44100):
 
    path = askopenfilename(parent=root)
    y = gui_util.load_audio(path)
+   y = y[:30*sr]
    draw_spec(y, axis, figure)
 
 def draw_spec(y, axis, figure, sr=44100):
 	D = librosa.amplitude_to_db(np.abs(librosa.stft(y, n_fft=512)), ref=np.max)
-	x_data, y_data = gui_util.get_axes_values(sr, 0, [0, sr*len(y)], D.shape)
-	display.specshow(D, x_data, y_data, ax=axis)
-
+	x_data, y_data = gui_util.get_axes_values(sr, 0, [0, len(y)/sr], D.shape)
+	display.specshow(D, x_data, y_data, ax=axis, y_axis='log')
 	canvas = FigureCanvasTkAgg(figure, master=root)
 	canvas.show()
 	canvas.get_tk_widget().grid(row=0, columnspan=5)
@@ -114,9 +114,9 @@ B.grid(row=3, columnspan=5)
 f = Figure()
 a = f.add_subplot(111)
 
-y = gui_util.get_audio('data/gymno.wav')
-D, axis = gui_util.get_spectrogram(y)
-display.specshow(D, axis[0], axis[1], ax=a, y_axis='log')
+# y = gui_util.get_audio('data/gymno.wav')
+# D, axis = gui_util.get_spectrogram(y)
+# display.specshow(D, axis[0], axis[1], ax=a, y_axis='log')
 # librosa.display.specshow(D, sr=44100, hop_length=512/4 , ax=a, y_axis='log', x_axis='time')
 
 # a tk.DrawingArea
@@ -126,7 +126,7 @@ canvas.get_tk_widget().grid(row=0, columnspan=5)
 
 menubar = Tk.Menu(root)
 filemenu = Tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="Open", command=openfile)
+filemenu.add_command(label="Open", command= lambda: openfile(a, f))
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="File", menu=filemenu)
