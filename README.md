@@ -2,7 +2,7 @@
 
 An application for the detailed visualization of audio spectrograms.
 
-##Usage
+## Usage
 
 To run the program, run the `gui.py` script from the projects main folder:
 
