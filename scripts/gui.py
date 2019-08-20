@@ -37,8 +37,24 @@ def process_zoom():
 	time_range = [0, 0]
 	time_range[0] = float(E3.get())
 	time_range[1] = float(E4.get())
-	
-	return(draw_spec_zoom(stft_zoom.stft_zoom(y, freq_range, time_range, 44100)))
+
+	freq_res = E5.get()
+	time_res = E6.get()
+
+	freq_res_type = freqop.get()
+	time_res_type = timeop.get()
+
+	print(freq_res_type, time_res_type)
+	print(freq_res, time_res)
+
+	if not freq_res:
+		freq_res = 40
+		freq_res_type = 'freq. bins'
+	if not time_res:
+		time_res = 0 # default value: hop size defaults to n_fft // 4
+		time_res_type = 'time frames'
+
+	return(draw_spec_zoom(stft_zoom.stft_zoom(y, freq_range, time_range, 44100, freq_res_type, float(freq_res), time_res_type, float(time_res))))
 
 def draw_spec_zoom(zoom):
 	D = zoom[0]
@@ -124,8 +140,8 @@ timeop = Tk.StringVar(root)
 freqop = Tk.StringVar(root)
 choices_time = { 'time frames','ms per bin'}
 choices_freq = { 'freq. bins','Hz per bin'}
-timeop.set('time frames')
-freqop.set('freq. bins')
+timeop.set('ms per bin')
+freqop.set('Hz per bin')
 
 popupMenu1 = Tk.OptionMenu(resframe, timeop, *choices_time)
 popupMenu1.grid(row=2, column=1)
